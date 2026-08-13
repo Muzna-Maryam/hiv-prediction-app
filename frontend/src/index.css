@@ -1,0 +1,137 @@
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --surface-sunken: #efede6;
+  --border: #e0ddd2;
+  --border-strong: #c9c5b6;
+
+  --text-primary: #1b2430;
+  --text-secondary: #5b6472;
+  --text-muted: #8b93a0;
+
+  --accent: #1d6e62;
+  --accent-bg: #e1f0ec;
+  --accent-strong: #0f4d44;
+
+  /* Risk gradient - shared by the probability gauge and the SHAP bars.
+     Low risk reuses the accent teal on purpose: "not infected" and
+     "the tool's default trustworthy state" are the same color. */
+  --risk-low: #1d6e62;
+  --risk-mid: #b8862a;
+  --risk-high: #a13a2e;
+  --risk-low-bg: #e1f0ec;
+  --risk-mid-bg: #f6ecd9;
+  --risk-high-bg: #f5e2df;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+p {
+  margin: 0 0 0.75rem;
+  color: var(--text-secondary);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.field input {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.field input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+button.primary {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+button.primary:hover {
+  background: var(--accent-strong);
+}
+
+button.primary:disabled {
+  background: var(--border-strong);
+  cursor: not-allowed;
+}
+
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table.data th {
+  text-align: left;
+  color: var(--text-secondary);
+  font-weight: 500;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 11px;
+}
+
+table.data td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+}

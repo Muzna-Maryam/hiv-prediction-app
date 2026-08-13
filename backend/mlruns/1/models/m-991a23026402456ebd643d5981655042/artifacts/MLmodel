@@ -1,0 +1,23 @@
+artifact_path: /Users/mm08054/Documents/GRIND/HIVPredictor/backend/mlruns/1/models/m-991a23026402456ebd643d5981655042/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.14.4
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.9.0
+    skops_trusted_types: null
+mlflow_version: 3.15.1
+model_id: m-991a23026402456ebd643d5981655042
+model_size_bytes: 5581843
+model_uuid: m-991a23026402456ebd643d5981655042
+prompts: null
+run_id: 8ba0758f4b1c4be6b72c7607dffdb697
+utc_time_created: '2026-08-13 16:17:03.281705'
