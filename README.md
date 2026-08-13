@@ -1,93 +1,91 @@
-# Machine Learing - AIDS 
+# HIV outcome predictor
+
+A full-stack, MLOps-backed rebuild of a course project that originally trained
+a few scikit-learn models in a single script. This version turns that into a
+served, explainable, tracked prediction system.
+
+## What it does
+
+Given a set of clinical features from the ACTG175 AIDS Clinical Trial dataset
+(demographics, treatment history, CD4/CD8 lab values), predicts the
+probability that a patient reaches the study's clinical endpoint, and explains
+*why* using SHAP - not just a bare probability, but which specific factors
+pushed the prediction up or down.
+
+## Architecture
+
+frontend/ React + TypeScript (Vite)
+Predict page -> POST /predict -> probability + top 5 contributing factors
+Explain page -> POST /explain -> full 20-feature SHAP breakdown + base value
+Compare page -> GET /models/comparison -> live MLflow run comparison
+
+backend/ FastAPI + scikit-learn + SHAP + MLflow
+app/features.py Custom sklearn Transformer for feature engineering
+app/pipeline.py Builds the full Pipeline (features -> scale -> select -> model)
+app/train.py Trains 4 candidate models, tracks each in MLflow, saves the best
+app/explain.py Model-agnostic SHAP explainer wrapping the whole pipeline
+app/main.py The 3 API endpoints
+app/models_registry.py Queries MLflow for the comparison dashboard
+
+## Why it's built this way
+
+- **One Pipeline object, not separate scripts.** Feature engineering,
+  scaling, and the model are chained into a single scikit-learn `Pipeline`.
+  Training and serving use the exact same object - there's no way for the
+  code that prepares data at training time to drift from the code that
+  prepares it at prediction time.
+- **MLflow tracks every run.** Every retrain logs params, accuracy, and a
+  full classification report for all 4 candidate models, and registers
+  whichever one wins as the current deployed model. `mlflow ui` shows the
+  full history.
+- **SHAP is model-agnostic.** Explanations are computed by treating the
+  entire pipeline as a black box (`algorithm="permutation"`), not a
+  tree-specific method - so explanations keep working even if a future
+  retrain picks a different winning model (SVM today, RandomForest
+  tomorrow).
+- **The `time` feature was deliberately removed.** It's a survival-analysis
+  artifact (time to the clinical event or censoring) that's mechanically
+  entangled with the label itself, not a genuine predictive signal - see
+  the comment in `app/train.py` for the full reasoning. Removing it trades
+  some raw accuracy for a number that's actually meaningful.
+
+## Running it
+
+**Backend:**
+
+cd backend
+pip install -r requirements.txt
+python -m app.train # trains, tracks in MLflow, saves the model
+uvicorn app.main:app --reload
 
 
+**Frontend** (in a second terminal):
 
-## Getting started
+cd frontend
+npm install
+npm run dev
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Then open `http://localhost:5173`. The dev server proxies API calls to the
+backend on `:8000`.
 
-## Add your files
+**View experiment history:**
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+cd backend
+mlflow ui
 
-```
-cd existing_repo
-git remote add origin https://mygit.th-deg.de/mm08054/machine-learing-aids.git
-git branch -M main
-git push -uf origin main
-```
 
-## Integrate with your tools
+## Known limitations
 
-- [ ] [Set up project integrations](https://mygit.th-deg.de/mm08054/machine-learing-aids/-/settings/integrations)
+- Recall on the minority class (patients who reach the endpoint) is
+  meaningfully lower than overall accuracy across all four models -
+  disclosed rather than hidden, since it's the honest weak point of the
+  current approach. Worth addressing with `class_weight="balanced"` or
+  resampling in a future iteration.
+- SHAP's permutation explainer is model-agnostic but slow (seconds per
+  request) - fine for this demo, would need a faster explainer for
+  real-time production traffic.
 
-## Collaborate with your team
+## Stack
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Python, scikit-learn, FastAPI, MLflow, SHAP, React, TypeScript, Vite.
