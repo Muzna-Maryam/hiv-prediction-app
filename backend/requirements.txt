@@ -8,3 +8,4 @@ pydantic-settings
 shap
 mlflow
 pytest
+httpx2
