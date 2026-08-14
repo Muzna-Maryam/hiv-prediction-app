@@ -22,7 +22,6 @@ import joblib
 import mlflow
 import mlflow.sklearn
 import pandas as pd
-print(list(pd.read_csv("data/AIDS_CLASSIFICATION.csv").columns))
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
