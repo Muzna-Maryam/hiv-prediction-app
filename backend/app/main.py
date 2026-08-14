@@ -1,6 +1,8 @@
 """
 FastAPI app. Run: uvicorn app.main:app --reload
 """
+import os
+from fastapi.middleware.cors import CORSMiddleware
 
 from contextlib import asynccontextmanager
 
@@ -23,6 +25,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="HIV Outcome Predictor", lifespan=lifespan)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[os.environ.get("ALLOWED_ORIGIN", "*")],
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 def health():

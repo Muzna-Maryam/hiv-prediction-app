@@ -10,7 +10,7 @@ import type {
 // (VITE_API_BASE_URL) pointed at wherever the API is deployed - not
 // wired up yet since that's a Phase 5 (deploy) concern, not a frontend
 // one, but worth remembering this is the one line that changes.
-const BASE_URL = "/api";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
 async function postJSON<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
