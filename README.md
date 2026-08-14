@@ -27,23 +27,34 @@ pushed the prediction up or down.
 ## Architecture
 
 frontend/ React + TypeScript (Vite)
+
 Predict page -> POST /predict -> probability + top 5 contributing factors
+
 Explain page -> POST /explain -> full 20-feature SHAP breakdown + base value
+
 Compare page -> GET /models/comparison -> live MLflow run comparison
 
 backend/ FastAPI + scikit-learn + SHAP + MLflow
+
 app/features.py Custom sklearn Transformer for feature engineering
+
 app/pipeline.py Builds the full Pipeline (features -> scale -> select -> model)
+
 app/train.py Trains 4 candidate models, tracks each in MLflow, saves the best
+
 app/explain.py Model-agnostic SHAP explainer wrapping the whole pipeline
+
 app/main.py The API endpoints + CORS
+
 app/models_registry.py Queries MLflow for the comparison dashboard
+
 tests/ Self-contained test suite, trains its own throwaway
 model on synthetic data (tests/conftest.py), so it
 needs no real dataset and no manual setup
 
-.github/workflows/ CI: runs the backend test suite and the frontend
+.github/workflows/ CI runs the backend test suite and the frontend
 type-check + build on every push
+
 Dockerfile (x2 per service) Local dev (volume-mounted, trains on first run)
 vs. deploy (model baked in at build time)
 
