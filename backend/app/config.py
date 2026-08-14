@@ -15,7 +15,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env")
 
-    data_path: str = "data/AIDS_CLASSIFICATION.csv"
+    data_path: str = "data/AIDS_Classification.csv"
     model_path: str = "artifacts/best_pipeline.joblib"
     background_path: str = "artifacts/background_sample.joblib"
 
