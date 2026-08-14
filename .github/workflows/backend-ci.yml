@@ -1,0 +1,36 @@
+name: Backend CI
+
+# Path-filtered so a frontend-only or README-only change doesn't
+# trigger a Python test run - and vice versa (see frontend-ci.yml).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # No manual training step here, on purpose - tests/conftest.py
+      # trains its own throwaway model on synthetic data automatically.
+      # CI never touches the real dataset (which isn't checked in).
+      - name: Run tests
+        run: pytest tests/ -v

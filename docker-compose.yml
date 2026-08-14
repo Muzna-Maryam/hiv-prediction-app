@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    # Read-write, not read-only: entrypoint.sh trains automatically on
+    # first run if no model exists yet, which means it has to be able to
+    # write into artifacts/ and mlruns/. All three are directories, not
+    # single files - bind-mounting a single file that doesn't yet exist
+    # on the host makes Docker silently create an empty directory with
+    # that name instead, which breaks SQLite in a confusing way. Putting
+    # mlflow.db inside the mounted mlruns/ directory (via the env var
+    # below) sidesteps that entirely.
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/artifacts:/app/artifacts
+      - ./backend/mlruns:/app/mlruns
+
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

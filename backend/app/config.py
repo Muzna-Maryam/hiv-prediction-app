@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     model_path: str = "artifacts/best_pipeline.joblib"
     background_path: str = "artifacts/background_sample.joblib"
 
-    mlflow_tracking_uri: str = "sqlite:///mlflow.db"
+    mlflow_tracking_uri: str = "sqlite:///mlruns/mlflow.db"
     mlflow_experiment_name: str = "hiv-outcome-prediction"
     mlflow_model_name: str = "hiv-outcome-predictor"
 

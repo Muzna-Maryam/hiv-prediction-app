@@ -47,7 +47,7 @@ export default function ExplainPage() {
                 <p style={{ margin: 0 }}>
                   <strong>Baseline: </strong>
                   <span className="mono">{(result.base_value * 100).toFixed(1)}%</span> is the
-                  model's average predicted probability across a sample of training patients -
+                  model's average predicted probability across a sample of training patients, 
                   the starting point before this patient's specific values are taken into
                   account. Each feature below either pushes the prediction up from that baseline
                   (toward infected) or down (toward not infected). The sum of the baseline plus

@@ -26,7 +26,7 @@ export default function RiskGauge({
           {pct}%
         </span>
         <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-          predicted probability of infection &mdash; classified {label.replace("_", " ")}
+          predicted probability of infection, classified {label.replace("_", " ")}
         </span>
       </div>
 

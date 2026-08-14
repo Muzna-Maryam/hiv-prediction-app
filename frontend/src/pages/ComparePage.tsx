@@ -19,8 +19,8 @@ export default function ComparePage() {
       <div className="card">
         <h2>Model comparison</h2>
         <p>
-          Latest tuned run per model type, pulled live from MLflow's tracking store -
-          this reflects whichever training run you most recently executed with
+          Latest tuned run per model type, pulled live from MLflow's tracking store. 
+          Note that this reflects whichever training run was most recently executed with
           `python -m app.train`, not a fixed snapshot.
         </p>
 
