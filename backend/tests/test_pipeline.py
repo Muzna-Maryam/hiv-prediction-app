@@ -1,5 +1,5 @@
 """
-Smoke test using synthetic data shaped like AIDS_CLASSIFICATION.csv
+Smoke test using synthetic data shaped like AIDS_Classification.csv
 (this is the standard ACTG175 clinical trial column set). This doesn't
 validate model quality - it only proves the Pipeline builds, fits, and
 predicts without errors, BEFORE you run it against the real dataset.
